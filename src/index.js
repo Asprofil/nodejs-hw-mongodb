@@ -1,34 +1,31 @@
-// Завантажуємо змінні оточення з .env файлу
-require('dotenv').config();
-
-// Імпортуємо функцію для підключення до MongoDB
-const { initMongoConnection } = require('./db/initMongoConnection');
-
-// Імпортуємо Express
 const express = require('express');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+require('dotenv').config();
+const { initMongoConnection } = require('./db/initMongoConnection');
+const authRouter = require('./routers/auth');
 
-// Ініціалізація Express додатку
 const app = express();
 
-// Налаштовуємо парсинг JSON у запитах
+// ініціалізація підключення до MongoDB
+initMongoConnection();
+
+// Мідлвари
+app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-// Функція для запуску сервера
-const startApp = async () => {
-  // Підключаємося до MongoDB
-  await initMongoConnection();
+// Маршрути
+app.use(authRouter);
 
-  // Визначаємо простий маршрут
-  app.get('/', (req, res) => {
-    res.send('Hello, MongoDB!');
+// Обробка помилок
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    status: 'error',
+    message: err.message,
   });
+});
 
-  // Запускаємо сервер на порті 3000
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-};
-
-// Запуск додатку
-startApp();
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
