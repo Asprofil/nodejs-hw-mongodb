@@ -16,13 +16,5 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-   }
+}
 // Підключення до MongoDB та запуск серверу
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    })
-        .catch((error) => console.log(`Database connection error: ${error.message}`));
- 
-module.exports = { setupServer }
