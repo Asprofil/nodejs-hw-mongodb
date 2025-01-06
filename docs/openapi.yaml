@@ -1,0 +1,26 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: My API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: This is the API documentation for My Application.
+tags:
+  - name: Contacts
+    description: Endpoints related to contacts
+servers:
+  - url: http://localhost:3000
+  - url: # your deployed domain
+paths:
+  /contacts:
+    $ref: ./swagger/paths/contacts/post.yaml
+  /contacts/{contactId}:
+    $ref: ./swagger/paths/contacts/{id}/get.yaml
+    $ref: ./swagger/paths/contacts/{id}/patch.yaml
+    $ref: ./swagger/paths/contacts/{id}/delete.yaml
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
