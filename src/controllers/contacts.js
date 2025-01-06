@@ -1,46 +1,52 @@
-const cloudinary = require('cloudinary').v2;
-const Contact = require('../models/contact');
+const Contact = require('../models/contactModel');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const uploadPhoto = async (req, res, next) => {
+exports.getContacts = async (req, res) => {
   try {
-    const { path } = req.file;
+    const contacts = await Contact.find();
+    res.status(200).json(contacts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-    const result = await cloudinary.uploader.upload(path);
-    const newContact = new Contact({
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-      photo: result.secure_url,
+exports.getContactById = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    res.status(200).json(contact);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.createContact = async (req, res) => {
+  try {
+    const contact = new Contact(req.body);
+    await contact.save();
+    res.status(201).json(contact);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateContact = async (req, res) => {
+  try {
+    const contact = await Contact.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
     });
-
-    await newContact.save();
-    res.status(201).json({ status: 201, message: 'Contact created successfully', data: newContact });
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    res.status(200).json(contact);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-const updateContact = async (req, res, next) => {
+exports.deleteContact = async (req, res) => {
   try {
-    const { contactId } = req.params;
-    const { path } = req.file;
-
-    const result = await cloudinary.uploader.upload(path);
-    const updatedContact = await Contact.findByIdAndUpdate(contactId, {
-      ...req.body,
-      photo: result.secure_url,
-    }, { new: true });
-
-    res.status(200).json({ status: 200, message: 'Contact updated successfully', data: updatedContact });
+    const contact = await Contact.findByIdAndDelete(req.params.id);
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    res.status(200).json({ message: 'Contact deleted successfully' });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
-
-module.exports = { uploadPhoto, updateContact };

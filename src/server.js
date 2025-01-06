@@ -1,41 +1,29 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
-const fs = require('fs');
-const path = require('path');
+const swaggerDocument = require('./docs/swagger.json');
+require('dotenv').config();
+
+const contactsRoutes = require('./routes/contactsRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Parse JSON requests
 app.use(express.json());
 
-// Serve the Swagger UI documentation
-const swaggerDocument = fs.readFileSync(path.join(__dirname, 'docs/openapi.yaml'), 'utf-8');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(JSON.parse(swaggerDocument)));
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Define your routes
-app.get('/contacts/:contactId', (req, res) => {
-  // Implementation of get contact by ID
-  res.send({ message: 'Get contact by ID' });
-});
+// Routes
+app.use('/api/contacts', contactsRoutes);
+app.use('/api/auth', authRoutes);
 
-app.patch('/contacts/:contactId', (req, res) => {
-  // Implementation of update contact by ID
-  res.send({ message: 'Update contact by ID' });
-});
-
-app.delete('/contacts/:contactId', (req, res) => {
-  // Implementation of delete contact by ID
-  res.send({ message: 'Delete contact by ID' });
-});
-
-app.post('/contacts', (req, res) => {
-  // Implementation of create new contact
-  res.send({ message: 'Create new contact' });
-});
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.error('MongoDB connection error:', err));
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
-т
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

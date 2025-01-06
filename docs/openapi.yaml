@@ -1,72 +1,20 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: My Application
-  description: API documentation for my application
+  title: Contacts API
+  description: A simple API for managing contacts
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 tags:
   - name: Contacts
-    description: Operations related to contacts
+    description: API for managing contacts
 servers:
   - url: http://localhost:3000
 paths:
-  /contacts:
-    get:
-      summary: Get all contacts
-      operationId: getContacts
-      tags:
-        - Contacts
-      responses:
-        '200':
-          description: Successfully retrieved contacts
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                      example: 1
-                    name:
-                      type: string
-                      example: "John Doe"
-        '404':
-          description: Not found
-  /contacts/{contactId}:
-    get:
-      summary: Get a contact by ID
-      operationId: getContactById
-      tags:
-        - Contacts
-      parameters:
-        - name: contactId
-          in: path
-          required: true
-          schema:
-            type: integer
-            example: 1
-      responses:
-        '200':
-          description: Successfully retrieved contact
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  name:
-                    type: string
-                    example: "John Doe"
-        '404':
-          description: Contact not found
+  /api/contacts:
+    $ref: './swagger/paths/contacts/get.yaml'
+  /api/contacts/{id}:
+    $ref: './swagger/paths/contacts/{id}/get.yaml'
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
+  $ref: './swagger/components/responses.yaml'
