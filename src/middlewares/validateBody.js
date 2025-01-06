@@ -1,9 +1,14 @@
-const { BadRequest } = require('http-errors');
+const { validationResult } = require('express-validator');
 
-const validateBody = (schema) => (req, res, next) => {
-    const { error } = schema.validate(req.body);
-    if (error) return next(new BadRequest(error.message));
+const validateBody = (schema) => {
+  return async (req, res, next) => {
+    await schema(req, res, next);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     next();
+  };
 };
 
-module.exports = validateBody;
+module.exports = { validateBody };
