@@ -1,0 +1,22 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: createContact
+description: Creates a new contact in the system
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          phone:
+            type: string
+          photo:
+            type: string
+responses:
+  201:
+    description: Contact created successfully

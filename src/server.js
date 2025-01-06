@@ -1,22 +1,41 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const authRouter = require('./src/routers/auth');
-const contactsRouter = require('./src/routers/contacts');
+const swaggerUi = require('swagger-ui-express');
+const fs = require('fs');
+const path = require('path');
 
-dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Parse JSON requests
 app.use(express.json());
 
-// Підключення до MongoDB
-mongoose.connect('mongodb://localhost:27017/contact-manager', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log("MongoDB connected"))
-  .catch(err => console.log(err));
+// Serve the Swagger UI documentation
+const swaggerDocument = fs.readFileSync(path.join(__dirname, 'docs/openapi.yaml'), 'utf-8');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(JSON.parse(swaggerDocument)));
 
-// Роутинг
-app.use('/api', authRouter);
-app.use('/api', contactsRouter);
+// Define your routes
+app.get('/contacts/:contactId', (req, res) => {
+  // Implementation of get contact by ID
+  res.send({ message: 'Get contact by ID' });
+});
 
-app.listen(3000, () => console.log('Server is running on http://localhost:3000'));
+app.patch('/contacts/:contactId', (req, res) => {
+  // Implementation of update contact by ID
+  res.send({ message: 'Update contact by ID' });
+});
+
+app.delete('/contacts/:contactId', (req, res) => {
+  // Implementation of delete contact by ID
+  res.send({ message: 'Delete contact by ID' });
+});
+
+app.post('/contacts', (req, res) => {
+  // Implementation of create new contact
+  res.send({ message: 'Create new contact' });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+т
