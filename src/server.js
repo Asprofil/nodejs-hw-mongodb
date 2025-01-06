@@ -1,25 +1,28 @@
-const express = require('express')
-const cors = require('cors')
-const pino = require('pino-http')()
-const contactsRouter = require('./routes/contacts')
-
+const express = require('express');
+const mongoose = require('mongoose');
+const contactsRouter = require('./routes/contacts');
 const setupServer = () => {
-  const app = express()
+const app = express();
 
-  app.use(cors())
-  app.use(pino)
-  app.use(express.json())
+// Middleware для парсингу JSON
+app.use(express.json());
 
-  app.use('/contacts', contactsRouter)
+// Роутинг
+app.use('/contacts', contactsRouter);
 
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' })
-  })
+// Обробник помилок
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({ message: err.message });
+});
 
-  const PORT = process.env.PORT || 3000
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-  })
-}
-
+const PORT = process.env.PORT || 3000;
+   }
+// Підключення до MongoDB та запуск серверу
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+        .catch((error) => console.log(`Database connection error: ${error.message}`));
+ 
 module.exports = { setupServer }
