@@ -1,24 +1,70 @@
 openapi: 3.1.0
 info:
   version: 1.0.0
-  title: My API
+  title: My Application
+  description: API documentation for my application
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is the API documentation for My Application.
 tags:
   - name: Contacts
-    description: Endpoints related to contacts
+    description: Operations related to contacts
 servers:
   - url: http://localhost:3000
-  - url: # your deployed domain
 paths:
   /contacts:
-    $ref: ./swagger/paths/contacts/post.yaml
+    get:
+      summary: Get all contacts
+      operationId: getContacts
+      tags:
+        - Contacts
+      responses:
+        '200':
+          description: Successfully retrieved contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "John Doe"
+        '404':
+          description: Not found
   /contacts/{contactId}:
-    $ref: ./swagger/paths/contacts/{id}/get.yaml
-    $ref: ./swagger/paths/contacts/{id}/patch.yaml
-    $ref: ./swagger/paths/contacts/{id}/delete.yaml
+    get:
+      summary: Get a contact by ID
+      operationId: getContactById
+      tags:
+        - Contacts
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Successfully retrieved contact
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "John Doe"
+        '404':
+          description: Contact not found
 components:
   securitySchemes:
     bearerAuth:
