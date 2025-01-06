@@ -17,4 +17,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 }
+module.exports = { setupServer }
 // Підключення до MongoDB та запуск серверу
