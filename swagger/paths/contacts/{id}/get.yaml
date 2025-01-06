@@ -1,8 +1,8 @@
 tags:
   - Contacts
-summary: Отримати контакт за ID
+summary: Get contact by ID
 operationId: getContactById
-description: Отримує контакт по ID
+description: Retrieves a contact by their ID
 security:
   - bearerAuth: []
 parameters:
@@ -11,10 +11,10 @@ parameters:
     required: true
     schema:
       type: string
-    description: Ідентифікатор контакту
+    description: The ID of the contact to retrieve
 responses:
   200:
-    description: Контакт знайдено
+    description: Successfully retrieved contact
     content:
       application/json:
         schema:
@@ -29,4 +29,4 @@ responses:
             photo:
               type: string
   404:
-    description: Контакт не знайдено
+    description: Contact not found
