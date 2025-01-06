@@ -1,0 +1,45 @@
+schemas:
+  Contact:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      favorite:
+        type: boolean
+    required:
+      - id
+      - name
+      - email
+      - phone
+  NewContact:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      favorite:
+        type: boolean
+    required:
+      - name
+      - email
+      - phone
+  UpdateContact:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      favorite:
+        type: boolean

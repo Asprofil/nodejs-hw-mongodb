@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "My Application",
-    "description": "API documentation for my application",
+    "title": "Contacts API",
+    "description": "A simple API for managing contacts",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -17,82 +17,64 @@
   "tags": [
     {
       "name": "Contacts",
-      "description": "Operations related to contacts"
+      "description": "API for managing contacts"
     }
   ],
   "paths": {
-    "/contacts": {
+    "/api/contacts": {
       "get": {
-        "summary": "Get all contacts",
-        "operationId": "getContacts",
         "tags": [
           "Contacts"
         ],
+        "summary": "Get all contacts",
+        "description": "Fetch a list of all contacts",
+        "operationId": "getContacts",
         "responses": {
           "200": {
-            "description": "Successfully retrieved contacts",
+            "description": "A list of contacts",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "example": 1
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "John Doe"
-                      }
-                    }
+                    "$ref": "#/components/schemas/Contact"
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "Not found"
+          "500": {
+            "description": "Server error"
           }
         }
       }
     },
-    "/contacts/{contactId}": {
+    "/api/contacts/{id}": {
       "get": {
-        "summary": "Get a contact by ID",
-        "operationId": "getContactById",
         "tags": [
           "Contacts"
         ],
+        "summary": "Get contact by ID",
+        "description": "Fetch details of a contact using its ID",
+        "operationId": "getContactById",
         "parameters": [
           {
-            "name": "contactId",
+            "name": "id",
             "in": "path",
             "required": true,
+            "description": "The ID of the contact",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved contact",
+            "description": "Contact details",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer",
-                      "example": 1
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Contact"
                 }
               }
             }
@@ -105,10 +87,33 @@
     }
   },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "schemas": {
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the contact"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the contact"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the contact"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the contact"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email"
+        ]
       }
     }
   }

@@ -1,0 +1,26 @@
+post:
+  tags:
+    - Contacts
+  summary: Create a new contact
+  description: Add a new contact to the database
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NewContact'
+  responses:
+    201:
+      description: Contact created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Contact'
+    400:
+      $ref: '#/components/responses/ValidationError'
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ValidationError'
