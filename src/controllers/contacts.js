@@ -1,34 +1,46 @@
-const { getContactsService, createContactService, updateContactService, deleteContactService, getContactByIdService } = require('../services/contacts');
+const cloudinary = require('cloudinary').v2;
+const Contact = require('../models/contact');
 
-const getContacts = async (req, res) => {
-    const contactsData = await getContactsService(req.query);
-    res.json({ status: 200, message: 'Successfully found contacts!', data: contactsData });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadPhoto = async (req, res, next) => {
+  try {
+    const { path } = req.file;
+
+    const result = await cloudinary.uploader.upload(path);
+    const newContact = new Contact({
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      photo: result.secure_url,
+    });
+
+    await newContact.save();
+    res.status(201).json({ status: 201, message: 'Contact created successfully', data: newContact });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const getContactById = async (req, res) => {
+const updateContact = async (req, res, next) => {
+  try {
     const { contactId } = req.params;
-    const contact = await getContactByIdService(contactId);
-    if (!contact) throw new Error("Contact not found");
-    res.json({ status: 200, message: 'Successfully found contact!', data: contact });
+    const { path } = req.file;
+
+    const result = await cloudinary.uploader.upload(path);
+    const updatedContact = await Contact.findByIdAndUpdate(contactId, {
+      ...req.body,
+      photo: result.secure_url,
+    }, { new: true });
+
+    res.status(200).json({ status: 200, message: 'Contact updated successfully', data: updatedContact });
+  } catch (error) {
+    next(error);
+  }
 };
 
-const createContact = async (req, res) => {
-    const newContact = await createContactService(req.body);
-    res.status(201).json({ status: 201, message: 'Successfully created a contact!', data: newContact });
-};
-
-const updateContact = async (req, res) => {
-    const { contactId } = req.params;
-    const updatedContact = await updateContactService(contactId, req.body);
-    if (!updatedContact) throw new Error("Contact not found");
-    res.json({ status: 200, message: 'Successfully patched a contact!', data: updatedContact });
-};
-
-const deleteContact = async (req, res) => {
-    const { contactId } = req.params;
-    const deletedContact = await deleteContactService(contactId);
-    if (!deletedContact) throw new Error("Contact not found");
-    res.status(204).send();
-};
-
-module.exports = { getContacts, getContactById, createContact, updateContact, deleteContact };
+module.exports = { uploadPhoto, updateContact };

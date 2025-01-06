@@ -1,10 +1,17 @@
 const express = require('express');
-const { registerUser, loginUser, refreshSession, logoutUser } = require('../controllers/auth');
+const { sendResetEmail, resetPassword } = require('../controllers/auth');
+const { validateBody } = require('../middlewares/validateBody');
+const { body } = require('express-validator');
+
 const router = express.Router();
 
-router.post('/register', registerUser);
-router.post('/login', loginUser);
-router.post('/refresh', refreshSession);
-router.post('/logout', logoutUser);
+router.post('/auth/send-reset-email', [
+  body('email').isEmail().withMessage('Invalid email address'),
+], validateBody, sendResetEmail);
+
+router.post('/auth/reset-pwd', [
+  body('token').notEmpty().withMessage('Token is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password should be at least 6 characters long'),
+], validateBody, resetPassword);
 
 module.exports = router;
